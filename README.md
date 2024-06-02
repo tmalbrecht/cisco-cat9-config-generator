@@ -4,7 +4,11 @@
 
 # Config generator for Cisco Catalyst 9000 switches
 
-The script is designed to extract switch variables from an Excell spreadsheet to generate switch configurations in bulk.
+The script is designed to extract switch variables from an Excel spreadsheet to generate switch configurations in bulk.
+
+## Code logic
+
+The script extracts variables from an XLSX file and stores them in a Python dictionary. This dictionary is then used with a Jinja template to generate the switch configuration. The configuration is written to a TXT file named after the switch's hostname. The script processes all provided XLSX files in a loop, generating the configurations one by one.
 
 ## Getting Started
 
@@ -12,7 +16,7 @@ The script is designed to extract switch variables from an Excell spreadsheet to
 
 Before installing the software, ensure you have the following prerequisites:
 
- * The script is tested in a windows environment but I expect it also to work in linux.
+ * The script is tested in a windows environment, but I expect it also to work in a linux environment.
  * Python Version: The code is developed in Python 3.12.1. Although it has not been tested on other versions, newer versions should generally be compatible.
  * Library Dependencies: Refer to the requirements.txt file for all necessary libraries. It is recommended to use a separate virtual environment (venv) for installation to avoid conflicts with existing packages.
 
@@ -78,4 +82,4 @@ python main.py
 
 If you haven't entered any secrets in the .env file, you will be prompted to provide them. The getpass() function is used to ensure that your passwords remain hidden.
 
-After the script will generate config for every switch that a Excell spreadsheet was provided for. You can find the generated configs in the folder 'generated_configs'.
+After the script will generate config for every switch that a Excell spreadsheet was provided for. You can find the generated configs in the script folder 'generated_configs'.
