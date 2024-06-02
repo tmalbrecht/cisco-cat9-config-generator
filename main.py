@@ -91,7 +91,7 @@ def get_time():
 
 
 if __name__ == "__main__":
-    # Check if directories for logs and xlsx reports exist, if not create them
+    # Check if directories for xlsx files and generated switch config exist, if not create them
     os.makedirs("switch_variables/", exist_ok=True)
     os.makedirs("generated_configs/", exist_ok=True)
 
@@ -122,7 +122,7 @@ if __name__ == "__main__":
     # Loop over all xlsx files
     for file_path in xlsx_files:
 
-        # Create python dictionary from xlsx file
+        # Create python dictionary from xlsx file and given secrets
         config_itmes = get_config_items_xlsx(
             file_path, admin_pass, snmp_user_pass, radius_key
         )
@@ -133,7 +133,7 @@ if __name__ == "__main__":
         )
         template = env.get_template("full_config_template.j2")
 
-        # Generate config by rendering the dictionary that was created from the xlsx file, after write config to a file
+        # Generate config by rendering the dictionary that was created from the xlsx file, after create txt file with hostname switch as name
         if config_itmes != None:
             hostname = f"generated_configs/{config_itmes.get('hostname')}.txt"
             cisco_config = template.render(config_itmes)
