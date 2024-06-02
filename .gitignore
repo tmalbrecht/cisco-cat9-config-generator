@@ -1,0 +1,11 @@
+# Python virtual environment
+.venv
+
+#Environment variables
+.env
+
+
+#cache
+/__pycache__/
+
+todo.txt

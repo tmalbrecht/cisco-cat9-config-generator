@@ -1,0 +1,151 @@
+!Configuration generated on 2024-06-02_10h08m
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!                          BASE CONFIG
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!
+hostname ams_sw2
+!
+username admin secret admin_pass
+!
+boot system flash:ios_file_18_20.bin
+!
+snmp-server location AMS SER 15
+!
+snmp-server user ADMIN GROUP v3 auth md5 snmp_pass 
+!
+ip route 0.0.0.0 0.0.0.0 192.168.10.1
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!                          VLAN CONFIG
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!
+vlan 20
+  name mgmt
+!
+vlan 30
+  name data
+!
+vlan 40
+  name av
+!
+vlan 50
+  name nvx
+!
+vlan 60
+  name ap
+!
+vlan 70
+  name wlan
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!                          IP CONFIG
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!
+int vlan 30
+  ip address 192.168.30.10 255.255.255.0
+  ip helper-address 4.4.4.4
+  ip helper-address 8.8.8.8
+!
+int vlan 50
+  ip address 192.168.50.10 255.255.255.0
+  ip helper-address 4.4.4.4
+  ip helper-address 8.8.8.8
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!                          INTERFACE CONFIG
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!
+int 1/1
+  description uplink_1
+  switchport mode trunk
+!
+int 1/2
+  description uplink_2
+  switchport mode trunk
+!
+int 1/3
+  description printer
+  switchport mode access
+  switchport access vlan 30
+  specific config data vlan
+  eap config
+!
+int 1/4
+  description camera
+  switchport mode access
+  switchport access vlan 30
+  specific config data vlan
+  eap config
+!
+int 1/5
+  description ap
+  switchport mode trunk 
+  switchport trunk native vlan 60
+  switchport trunk allowed vlan 60,70
+!
+int 1/6
+  description display
+  switchport mode access
+  switchport access vlan 40
+  specific config av vlan
+  eap config
+!
+int 1/7
+  description controller
+  switchport mode access
+  switchport access vlan 40
+  specific config av vlan
+  eap config
+!
+int 1/8
+  description touchscreen
+  switchport mode access
+  switchport access vlan 40
+  specific config av vlan
+  eap config
+!
+int 1/9
+  description room booking
+  switchport mode access
+  switchport access vlan 40
+  specific config av vlan
+  eap config
+!
+int 1/10
+  description nvx_1
+  switchport mode access
+  switchport access vlan 50
+  specific config nvx vlan 
+  switchport port-security
+  switchport port-security maximum 2
+!
+int 1/11
+  description nvx_2
+  switchport mode access
+  switchport access vlan 50
+  specific config nvx vlan 
+  eap config
+!
+int 1/12
+  description nvx_3
+  switchport mode access
+  switchport access vlan 50
+  specific config nvx vlan 
+  eap config
+!
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!                          MISC CONFIG
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!
+ntp source vlan 20
+ip radius source-interface vlan 20
+radius-server key radius_key
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!                          SAVE CONFIG
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!
+copy running-config startup-config

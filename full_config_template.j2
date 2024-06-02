@@ -1,0 +1,87 @@
+!Configuration generated on {{ time_now }}
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!                          BASE CONFIG
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!
+hostname {{ hostname }}
+!
+username admin secret {{ admin_pass }}
+!
+boot system flash:{{ software_file }}
+!
+snmp-server location {{ snmp_location }}
+!
+snmp-server user ADMIN GROUP v3 auth md5 {{ snmp_user_pass }} 
+!
+ip route 0.0.0.0 0.0.0.0 {{ default_gateway }}
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!                          VLAN CONFIG
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!
+{% for vlan in vlans %}
+vlan {{ vlan.id }}
+  name {{ vlan.name }}
+!
+{% endfor %}
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!                          IP CONFIG
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!
+{% for int in ip_int %}
+int vlan {{ int.vlan }}
+  ip address {{ int.ip }} {{ int.mask }}
+  ip helper-address 4.4.4.4
+  ip helper-address 8.8.8.8
+!
+{% endfor %}
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!                          INTERFACE CONFIG
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!
+{% for int in interfaces %}
+int {{ int.interface }}
+  description {{ int.description }}
+  {% if int['type'] == "uplink" %}
+  switchport mode trunk
+  {% elif int['type'] == "data" %}
+  switchport mode access
+  switchport access vlan {{int.vlan}}
+  specific config data vlan
+  {% elif int['type'] == "av" %}
+  switchport mode access
+  switchport access vlan {{int.vlan}}
+  specific config av vlan
+  {% elif int['type'] == "nvx" %}
+  switchport mode access
+  switchport access vlan {{int.vlan}}
+  specific config nvx vlan 
+  {% elif int['type'] == "ap" %}
+  switchport mode trunk 
+  switchport trunk native vlan {{ ap_vlan }}
+  switchport trunk allowed vlan {{ ap_vlan }},{{ ap_wlan }}
+  {% endif %}
+  {% if int['security'] == "eap" %}
+  eap config
+  {% elif int['security'] == "static" %}
+  switchport port-security
+  switchport port-security maximum 2
+  {% endif %}
+!
+{% endfor %}
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!                          MISC CONFIG
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!
+ntp source vlan {{ source_vlan }}
+ip radius source-interface vlan {{ source_vlan }}
+radius-server key {{ radius_key }}
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!                          SAVE CONFIG
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!
+copy running-config startup-config
