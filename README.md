@@ -52,7 +52,7 @@ touch .env
 nano .env
 ```
 
-Enter your credentials and email details into the file as shown below; you can copy and paste them directly into nano:
+Enter your secrets into the file as shown below; you can copy and paste them directly into nano:
 ```
 # Secrets needed to generate config
 # Leave blank if you don't want to store them here for security reasons.
@@ -65,7 +65,9 @@ Close the file by typing ctrl + x, type 'y' and after press enter.
 
 ## Security 
 
-Please ensure that your secrets are not stored in a script within a directory where others have read permissions. If the secrets are not specified in the .env file, you will be prompted to enter them when executing the script. The getpass() function is used to securely handle your passwords, ensuring it remains hidden at all times.
+Please ensure that your secrets are not stored in a script within a directory where others have read permissions. If the secrets are not specified in the .env file, you will be prompted to enter them when executing the script. The getpass() function is used to securely handle your secrets, ensuring it remains hidden at all times.
+
+Mind that all secrets will be visible in plain text in the generated configs. They are not encrypted when the config is generated. Make sure they are stored into a save place.
 
 ## Usage
 Navigate into the project directory and execute main.py:
